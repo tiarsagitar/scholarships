@@ -17,16 +17,45 @@ class DisbursementResource extends JsonResource
         return [
             'id' => $this->id,
             'disbursement_schedule_id' => $this->disbursement_schedule_id,
-            'award_id' => $this->award_id,
-            'cost_category_id' => $this->cost_category_id,
             'amount' => $this->amount,
             'disbursed_at' => $this->disbursed_at,
             'status' => $this->status,
-            'idempotency' => $this->idempotency,
             'notes' => $this->notes,
-            'disbursement_schedule' => $this->whenLoaded('disbursementSchedule') ? $this->disbursementSchedule->only(['id', 'scheduled_amount', 'paid_amount']) : null,
-            'award' => new AwardResource($this->whenLoaded('award')),
-            'cost_category' => new CostCategoryResource($this->whenLoaded('costCategory')),
+            'disbursement_schedule' => $this->whenLoaded('disbursementSchedule', function() {
+                return [
+                    'id' => $this->disbursementSchedule->id,
+                    'scheduled_amount' => $this->disbursementSchedule->scheduled_amount,
+                    'scheduled_date' => $this->disbursementSchedule->scheduled_date,
+                    'description' => $this->disbursementSchedule->description,
+                    'award_allocation' => $this->whenLoaded('disbursementSchedule.awardAllocation', function() {
+                        return [
+                            'id' => $this->disbursementSchedule->awardAllocation->id,
+                            'cost_category' => new CostCategoryResource($this->disbursementSchedule->awardAllocation->costCategory),
+                            'award' => [
+                                'id' => $this->disbursementSchedule->awardAllocation->award->id,
+                                'amount' => $this->disbursementSchedule->awardAllocation->award->amount,
+                                'application' => [
+                                    'scholarship' => new ScholarshipResource($this->disbursementSchedule->awardAllocation->award->application->scholarship),
+                                ],
+                            ],
+                        ];
+                    }),
+                ];
+            }),
+            'receipts' => $this->whenLoaded('receipts', function() {
+                return $this->receipts->map(function($receipt) {
+                    return [
+                        'id' => $receipt->id,
+                        'original_name' => $receipt->original_name,
+                        'file_size' => $receipt->file_size,
+                        'mime_type' => $receipt->mime_type,
+                        'description' => $receipt->description,
+                        'uploaded_at' => $receipt->uploaded_at,
+                        'download_url' => url('storage/receipts/' . $receipt->original_name),
+                        'status' => $receipt->status,
+                    ];
+                });
+            }),
         ];
     }
 }

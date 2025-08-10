@@ -24,4 +24,14 @@ class DisbursementPolicy
     {
         return $user->can('disbursements.filter');
     }
+
+    public function uploadReceipt(User $user): bool
+    {
+        return $user->hasPermissionTo('disbursements.upload-receipts');
+    }
+
+    public function viewDetails(User $user): bool
+    {
+        return $user->hasPermissionTo('disbursements.view-details');
+    }
 }

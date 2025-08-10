@@ -42,4 +42,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/applications/{id}/documents', [\App\Http\Controllers\Api\ApplicationController::class, 'uploadDocuments']);
     Route::get('/my-applications', [\App\Http\Controllers\Api\ApplicationController::class, 'myApplications']);
     Route::get('/applications/{id}', [\App\Http\Controllers\Api\ApplicationController::class, 'show']);
+
+    Route::get('/my-awards', [\App\Http\Controllers\Api\AwardController::class, 'myAwards']);
+    Route::get('/awards/{awardId}/disbursements', [\App\Http\Controllers\Api\AwardController::class, 'awardDisbursements']);
+
+    // Disbursement routes
+    Route::post('/disbursements/{id}/receipts', [\App\Http\Controllers\Api\DisbursementController::class, 'uploadReceipt']);
+    Route::get('/disbursements/{id}', [\App\Http\Controllers\Api\DisbursementController::class, 'show']);
 });

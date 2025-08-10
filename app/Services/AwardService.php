@@ -8,11 +8,20 @@ use App\Models\AwardAllocation;
 use App\Models\DisbursementSchedule;
 use App\Models\Disbursement;
 use App\Models\ScholarshipBudget;
+use App\Models\DisbursementReceipt;
+use App\Repositories\AwardRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Exception;
 
 class AwardService
 {
+    protected $awardRepository;
+
+    public function __construct(AwardRepository $awardRepository)
+    {
+        $this->awardRepository = $awardRepository;
+    }
     public function createAward($applicationId, array $data)
     {
         $application = Application::findOrFail($applicationId);
@@ -112,5 +121,15 @@ class AwardService
         }
 
         return $allocation;
+    }
+
+    public function getUserAwards($userId, array $filters = [])
+    {
+        return $this->awardRepository->getUserAwards($userId, $filters);
+    }
+
+    public function getAwardDisbursements($awardId, $userId)
+    {
+        return $this->awardRepository->getAwardDisbursements($awardId, $userId);
     }
 }

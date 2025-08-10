@@ -46,4 +46,9 @@ class Disbursement extends Model
     {
         return $query->whereBetween('disbursed_at', [$startDate, $endDate]);
     }
+
+    public function receipts()
+    {
+        return $this->hasMany(DisbursementReceipt::class);
+    }
 }

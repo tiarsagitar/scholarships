@@ -10,9 +10,20 @@ use App\Models\Disbursement;
 use App\Models\ScholarshipBudget;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Repositories\DisbursementRepository;
+use App\Models\DisbursementReceipt;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class DisbursementService
 {
+    protected $disbursementRepository;
+
+    public function __construct(DisbursementRepository $disbursementRepository)
+    {
+        $this->disbursementRepository = $disbursementRepository;
+    }
+
     public function markAsPaid($disbursementId, array $data)
     {
         return DB::transaction(function () use ($disbursementId, $data) {
@@ -77,5 +88,40 @@ class DisbursementService
         if ($amount > $remainingAmount) {
             throw new Exception('Payment amount exceeds remaining scheduled amount.');
         }
+    }
+
+    public function getDisbursementDetails($disbursementId, $userId)
+    {
+        return $this->disbursementRepository->getDisbursementDetails($disbursementId, $userId);
+    }
+
+    public function uploadReceipt($disbursementId, $userId, $receiptFile, $description = null)
+    {
+        $disbursement = $this->disbursementRepository->findById($disbursementId);
+        
+        if (!$disbursement) {
+            return null;
+        }
+
+        return DB::transaction(function () use ($disbursement, $receiptFile, $description) {
+            $fileName = 'receipts/' . time() . '_' . $receiptFile->getClientOriginalName();
+            $filePath = Storage::disk('public')->put($fileName, file_get_contents($receiptFile));
+
+            $receipt = DisbursementReceipt::create([
+                'disbursement_id' => $disbursement->id,
+                'file_path' => $filePath,
+                'original_name' => $receiptFile->getClientOriginalName(),
+                'file_size' => $receiptFile->getSize(),
+                'mime_type' => $receiptFile->getMimeType(),
+                'description' => $description,
+                'uploaded_at' => now(),
+            ]);
+
+            $disbursement->update([
+                'status' => 'receipt_uploaded'
+            ]);
+
+            return $receipt;
+        });
     }
 }

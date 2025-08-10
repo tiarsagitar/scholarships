@@ -28,4 +28,9 @@ class AwardAllocation extends Model
     {
         return $this->belongsTo(Award::class);
     }
+
+    public function disbursementSchedules()
+    {
+        return $this->hasMany(DisbursementSchedule::class);
+    }
 }

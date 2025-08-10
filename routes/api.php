@@ -33,6 +33,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('/disbursements/{id}/pay', [\App\Http\Controllers\Api\Admin\DisbursementController::class, 'markAsPaid']);
         Route::get('/disbursements', [\App\Http\Controllers\Api\Admin\DisbursementController::class, 'index']);
+
+        Route::post('receipts/{id}/verify', [\App\Http\Controllers\Api\Admin\DisbursementController::class, 'receiptVerify']);
     });
 
     Route::get('/scholarships', [\App\Http\Controllers\Api\ScholarshipController::class, 'index']);

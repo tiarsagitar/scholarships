@@ -64,4 +64,22 @@ class DisbursementController extends Controller
             return ApiResponse::error($e->getMessage(), 400);
         }
     }
+
+    public function receiptVerify(Request $request, $disbursementId)
+    {
+        $this->authorize('view', Disbursement::class);
+
+        $request->validate([
+            'status' => 'required|in:pending,verified,rejected',
+        ]);
+
+        $data = $request->only(['status', 'description']);
+
+        try {
+            $disbursement = $this->disbursementService->verifyReceipt($disbursementId, $data);
+            return ApiResponse::success($disbursement, 'Receipt verified successfully');
+        } catch (Exception $e) {
+            return ApiResponse::error($e->getMessage(), 400);
+        }
+    }
 }

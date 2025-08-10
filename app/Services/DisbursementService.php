@@ -62,7 +62,7 @@ class DisbursementService
 
     public function getDisbursements(array $filters = [])
     {
-        $query = Disbursement::with(['award', 'costCategory', 'disbursementSchedule']);
+        $query = Disbursement::with(['award', 'costCategory', 'disbursementSchedule', 'receipts']);
 
         if (isset($filters['status'])) {
             $query->status($filters['status']);
@@ -123,5 +123,30 @@ class DisbursementService
 
             return $receipt;
         });
+    }
+
+    public function verifyReceipt($receiptId, $data)
+    {
+        $receipt = DisbursementReceipt::findOrFail($receiptId);
+
+        if ($data['status'] != 'rejectted') {
+            $statusDisbursement = 'receipt_rejected';
+        }
+        if ($data['status'] == 'verified') {
+            $statusDisbursement = 'receipt_verified';
+        }
+
+        $receipt->update([
+            'status' => $data['status'],
+            'uploaded_at' => now(),
+        ]);
+
+        $disbursement = Disbursement::findOrFail($receipt->disbursement_id);
+
+        $disbursement->update([
+            'status' => $statusDisbursement,
+        ]);
+
+        return $receipt;
     }
 }

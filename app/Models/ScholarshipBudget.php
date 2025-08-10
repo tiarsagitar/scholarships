@@ -9,7 +9,8 @@ class ScholarshipBudget extends Model
     protected $fillable = [
         'scholarship_id',
         'cost_category_id', 
-        'planned_amount'
+        'planned_amount',
+        'commited_amount'
     ];
 
     public function scholarship()

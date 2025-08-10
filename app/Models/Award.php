@@ -29,4 +29,19 @@ class Award extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
+    public function allocations()
+    {
+        return $this->hasMany(AwardAllocation::class);
+    }
+
+    public function disbursementSchedules()
+    {
+        return $this->hasMany(DisbursementSchedule::class);
+    }
+
+    public function disbursements()
+    {
+        return $this->hasMany(Disbursement::class);
+    }
 }

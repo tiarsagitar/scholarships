@@ -27,6 +27,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::get('/applications', [\App\Http\Controllers\Api\Admin\ApplicationController::class, 'index']);
         Route::post('/applications/{id}/review', [\App\Http\Controllers\Api\Admin\ApplicationController::class, 'review']);
+        Route::post('/applications/{id}/award', [\App\Http\Controllers\Api\Admin\AwardController::class, 'store']);
+
+        Route::post('/awards/{awardId}/schedules', [\App\Http\Controllers\Api\Admin\AwardController::class, 'createDisbursementSchedule']);
+
+        Route::post('/disbursements/{id}/pay', [\App\Http\Controllers\Api\Admin\DisbursementController::class, 'markAsPaid']);
+        Route::get('/disbursements', [\App\Http\Controllers\Api\Admin\DisbursementController::class, 'index']);
     });
 
     Route::get('/scholarships', [\App\Http\Controllers\Api\ScholarshipController::class, 'index']);

@@ -42,6 +42,9 @@ class DisbursementService
             $schedule->paid_amount += $data['amount'];
             $schedule->save();
 
+            $schedule->awardAllocation->disbursed_amount += $data['amount'];
+            $schedule->awardAllocation->save();
+
             return $disbursement;
         });
     }

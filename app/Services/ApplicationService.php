@@ -22,6 +22,18 @@ class ApplicationService
         return $this->applicationRepository->create($data);
     }
 
+    public function update(int $id, array $data): ?Application
+    {
+        $application = $this->applicationRepository->find($id);
+        
+        if (!$application) {
+            return null;
+        }
+
+        $application->update($data);
+        return $application;
+    }
+
     public function find(int $id): ?Application
     {
         return $this->applicationRepository->find($id);
@@ -88,5 +100,10 @@ class ApplicationService
         }
 
         return $uploadedDocuments;
+    }
+
+    public function getApplications(array $filters)
+    {
+        return $this->applicationRepository->getApplications($filters);
     }
 }

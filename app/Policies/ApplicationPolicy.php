@@ -22,4 +22,12 @@ class ApplicationPolicy
     public function viewDetails(User $user, Application $application) {
         return $user->id === $application->user_id || $user->hasPermissionTo('applications.view-details');
     }
+
+    public function listAll(User $user) {
+        return $user->hasPermissionTo('applications.list-all');
+    }
+
+    public function review(User $user) {
+        return $user->hasPermissionTo('applications.review');
+    }
 }

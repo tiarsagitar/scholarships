@@ -24,6 +24,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::get('/cost-categories', [\App\Http\Controllers\Api\Admin\CostCategoryController::class, 'index']);
         Route::post('/cost-categories', [\App\Http\Controllers\Api\Admin\CostCategoryController::class, 'store']);
+
+        Route::get('/applications', [\App\Http\Controllers\Api\Admin\ApplicationController::class, 'index']);
+        Route::post('/applications/{id}/review', [\App\Http\Controllers\Api\Admin\ApplicationController::class, 'review']);
     });
 
     Route::get('/scholarships', [\App\Http\Controllers\Api\ScholarshipController::class, 'index']);

@@ -74,4 +74,25 @@ class ApplicationRepository
             ->with('documents')
             ->get();
     }
+
+    public function getApplications(array $filters = [])
+    {
+        $query = $this->model->with(['scholarship', 'reviewer', 'user']);
+
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (!empty($filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
+        }
+        
+        if (!empty($filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
+        $query->orderBy('created_at', 'desc');
+
+        return $query->paginate($filters['per_page'] ?? 15);
+    }
 }

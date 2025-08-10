@@ -23,6 +23,9 @@ class ApplicationResource extends JsonResource
             'submitted_at' => $this->submitted_at,
             'scholarship' => new ScholarshipResource($this->whenLoaded('scholarship')),
             'user' => new UserResource($this->whenLoaded('user')),
+            'reviewer' => new UserResource($this->whenLoaded('reviewer')),
+            'reviewed_at' => $this->reviewed_at,
+            'reviewer_comments' => $this->reviewer_comments,
             'application_documents' => ApplicationDocumentResource::collection($this->whenLoaded('applicationDocuments'))
         ];
     }

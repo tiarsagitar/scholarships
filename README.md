@@ -1,0 +1,4 @@
+- composer install
+- set .env, like db
+- migrate table
+- set test data php artisan db:seed
